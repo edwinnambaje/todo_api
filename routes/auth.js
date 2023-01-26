@@ -1,8 +1,7 @@
 const router=require('express').Router();
 const bcrypt=require('bcrypt');
 const Register=require('../models/Register');
-
-
+const jwt=require('../helpers/jwt');
 router.post('/register',async(req,res)=>{
     try {
         const salt=await bcrypt.genSalt(10);
@@ -25,8 +24,10 @@ router.post('/login',async(req,res)=>{
         !user&&res.status(200).json("Wrong credentials");
         const validated=await bcrypt.compare(req.body.password,user.password)
         !validated&&res.status(200).json("Wrong credentials");
-        const {password,...others}=user._doc;
-        res.status(200).json(others);
+        const accessToken = jwt.sign({id:user._id})
+        res.status(200).json({status:"success",data:user,token:accessToken});
+        // const {password,...others}=user._doc;
+        // res.status(200).json(others);
     } catch (error) {
         res.status(500).json(error)
     }
