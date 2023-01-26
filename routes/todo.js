@@ -2,13 +2,13 @@ const router=require("express").Router();
 
 const Todo=require("../models/Todo");
 const auth=require('../middleware/auth');
-router.post('/add',(req,res)=>{
+router.post('/add',async(req,res)=>{
     try {
         const todo=new Todo({
             todo:req.body.todo,
             description:req.body.description,
         });
-        const newTodo=todo.save();
+        await todo.save();
         res.status(200).json({status:"success",data:todo});
         
     } catch (error) {
@@ -25,7 +25,7 @@ router.delete('/:id',async(req,res)=>{
         res.status(500).json(error);
     }
 })
-router.put('/:id',async(req,res)=>{
+router.put('/:id',auth.verifyTokenAndRole,async(req,res)=>{
     try {
         const updateTodo=await Todo.findByIdAndUpdate(req.params.id,{
             $set:req.body

@@ -12,5 +12,14 @@ const verifyToken = (req,res,next) =>{
         res.status(401).json({status:"error",error:error.message});
     }
 }
-
-module.exports={verifyToken};
+const verifyTokenAndRole = (req,res,next) =>{
+    verifyToken(req,res,() =>{
+        if(req.user.role == 'admin'){
+            next();
+        }
+        else{
+            return res.status(401).json({status:"error",error:"You are not authenticated"});
+        }
+    })
+}
+module.exports={verifyToken,verifyTokenAndRole}
