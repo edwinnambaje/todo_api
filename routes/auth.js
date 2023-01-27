@@ -26,8 +26,6 @@ router.post('/login',async(req,res)=>{
         !validated&&res.status(200).json("Password is incorrect");
         const accessToken = jwt.sign({id:user._id})
         res.status(200).json({status:"success",data:user,token:accessToken});
-        // const {password,...others}=user._doc;
-        // res.status(200).json(others);
     } catch (error) {
         res.status(500).json(error)
     }
