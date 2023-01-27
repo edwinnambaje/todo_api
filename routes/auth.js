@@ -1,33 +1,5 @@
 const router=require('express').Router();
-const bcrypt=require('bcrypt');
-const Register=require('../models/Register');
-const jwt=require('../helpers/jwt');
-router.post('/register',async(req,res)=>{
-    try {
-        const salt=await bcrypt.genSalt(10);
-        const hashedPassword= await bcrypt.hash(req.body.password,salt)
-        const newUser=new Register({
-            username:req.body.username,
-            password:hashedPassword,
-            email:req.body.email
-        })
-        await newUser.save();
-        const {password,...others}=newUser._doc;
-        res.status(200).json(others)
-    } catch (error) {
-        res.status(500).json(error);
-    }
-})
-router.post('/login',async(req,res)=>{
-    try {
-        const user=await Register.findOne({username:req.body.username})
-        !user&&res.status(200).json("Username is incorrect");
-        const validated=await bcrypt.compare(req.body.password,user.password)
-        !validated&&res.status(200).json("Password is incorrect");
-        const accessToken = jwt.sign({id:user._id})
-        res.status(200).json({status:"success",data:user,token:accessToken});
-    } catch (error) {
-        res.status(500).json(error)
-    }
-})
+const RegisterController=require('../controllers/registerController');
+router.post('/register',RegisterController.register);
+router.post('/login',RegisterController.login);
 module.exports=router;
