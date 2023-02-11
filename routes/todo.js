@@ -25,7 +25,7 @@ router.delete('/:id',async(req,res)=>{
         res.status(500).json(error);
     }
 })
-router.put('/:id',auth.verifyTokenAndRole,async(req,res)=>{
+router.put('/:id',async(req,res)=>{
     try {
         const updateTodo=await Todo.findByIdAndUpdate(req.params.id,{
             $set:req.body
@@ -45,7 +45,7 @@ router.get('/',async(req,res)=>{
         res.status(500).json(error);
     }
 })
-router.get('/:id',auth.verifyToken,async(req,res)=>{
+router.get('/:id',async(req,res)=>{
     try {
         const getTodo=await Todo.findById(req.params.id);
         res.status(200).json({status:"success",data:getTodo});
